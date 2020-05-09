@@ -1,17 +1,17 @@
 {
-    "name": "kuroneko-san/php-onvif",
+    "name": "faithoflifedev/php-onvif",
     "description": "PHP Onvif library to connect with Onvif devices",
     "authors": [
         {
-            "name": "KuroNeko-san"
+            "name": "faithoflifedev"
         },
         {
-            "name": "Rick",
-            "email": "rick@rickdegraaff.nl"
+            "name": "Chris",
+            "email": "faithoflifedev@gmail.com"
         }
     ],
     "autoload": {
-        "classmap": ["lib/class.ponvif.php"]
+        "classmap": ["lib/cls_ponvif.php"]
     },
     "license": "MIT"
 }
