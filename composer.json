@@ -11,7 +11,9 @@
         }
     ],
     "autoload": {
-        "classmap": ["lib/cls_ponvif.php"]
+        "psr-0": {
+            "ponvif": "lib"
+        }
     },
     "license": "MIT"
 }
