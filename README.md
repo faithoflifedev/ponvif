@@ -12,11 +12,13 @@ This software module can control network video devices with ONVIF protocol (HTTP
 
 ```php
 <?php
+require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 
-require 'class.ponvif.php';
+use Onvif\Onvif;
 
-$onvif = new Ponvif();
-$result = $onvif->discover();
+$ponvif = new Onvif();
+
+$result = Onvif::discover();
 
 var_dump($result);
 ```
@@ -45,33 +47,23 @@ array (size=2)
       'IPAddr' => string '192.168.1.201' (length=13)
 ```
 
-### Discovery options
-setDiscoveryTimeout(5) - timeout for device response; default "2"
-
-setDiscoveryBindIp('192.168.1.5') - choose ethernet card for discovery request; default "0.0.0.0"
-
-setDiscoveryHideDuplicates(false) - disable duplicate filtering (some devices may send more than one response); default "true"
-
-
 ### Get media streams
 
 ```php
 <?php
+require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 
-require 'class.ponvif.php';
+use Onvif\Onvif;
 
-$onvif = new Ponvif();
-$onvif->setUsername('admin');
-$onvif->setPassword('password');
-$onvif->setIPAddress('192.168.1.108');
+$onvif = new Onvif();
 
 // In some cases you need to set MediaUrl manually. You can find it in "XAddrs" key (see above).
 // $onvif->setMediaUri('http://192.168.1.108:3388/onvif/device_service');
 
 try
 {
-	$onvif->initialize();
-	
+  $onvif->initialize( "192.168.1.182", "admin", "admin12345" );
+
 	$sources = $onvif->getSources();
 	$profileToken = $sources[0][0]['profiletoken'];
 	$mediaUri = $onvif->media_GetStreamUri($profileToken);

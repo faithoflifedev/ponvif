@@ -4,6 +4,12 @@ namespace Onvif;
 
 class Onvif
 {
+	protected static $discoverytimeout = 2;
+	protected static $discoverybindip = '0.0.0.0';
+	protected static $discoverymcastip = '239.255.255.250';
+	protected static $discoverymcastport = 3702;
+	protected static $discoveryhideduplicates = true;
+
 	protected $username;
 	protected $passwd;
 	protected $timeDelta;
@@ -67,6 +73,57 @@ class Onvif
 
 		$this->profiles = $this->getProfiles();
 		$this->sources = $this->_getActiveSources();
+	}
+
+	public static function discover() {
+		$result = array();
+
+		$post_string = SoapRequest::$discover;
+
+		try {
+			if ( ($sock = @socket_create( AF_INET, SOCK_DGRAM, SOL_UDP ) ) == false ):
+				echo( 'Create socket error: [' . socket_last_error() . '] ' . socket_strerror( socket_last_error() ) );
+			endif;
+
+			if ( @socket_bind($sock, Onvif::$discoverybindip, rand( 20000, 40000 ) ) == false ):
+				echo( 'Bind socket error: [' . socket_last_error() . '] ' . socket_strerror( socket_last_error() ) );
+			endif;
+
+			socket_set_option( $sock, IPPROTO_IP, MCAST_JOIN_GROUP, array( 'group' => Onvif::$discoverymcastip ) );
+
+			socket_sendto( $sock, $post_string, strlen( $post_string ), 0, Onvif::$discoverymcastip, Onvif::$discoverymcastport );
+
+			$sock_read = array( $sock );
+
+			$sock_write  = NULL;
+
+			$sock_except = NULL;
+
+			while ( socket_select( $sock_read, $sock_write, $sock_except, Onvif::$discoverytimeout ) > 0 ):
+				if ( @socket_recvfrom($sock, $response, 9999, 0, $from, Onvif::$discoverymcastport ) !== false ):
+					if ( $response != NULL && $response != $post_string ):
+						$response = new SoapResponse( $response );
+
+						print_r( $response ); die;
+
+						/* if(!$this->isFault($response)){
+							$response['Envelope']['Body']['ProbeMatches']['ProbeMatch']['IPAddr'] = $from;
+							if($this->discoveryhideduplicates){
+								$result[$from] = $response['Envelope']['Body']['ProbeMatches']['ProbeMatch'];
+							} else {
+								$result[] = $response['Envelope']['Body']['ProbeMatches']['ProbeMatch'];
+							}
+						} */
+					endif;
+				endif;
+			endwhile;
+
+			socket_close($sock);
+		} catch ( \Exception $e ) {}
+
+		sort( $result );
+
+		return $result;
 	}
 
 	public function getSystemDateAndTime()
