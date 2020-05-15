@@ -659,7 +659,7 @@ class Onvif
 					$sources[$inprofile]['encoding'] = $profiles[$y]['tt:VideoEncoderConfiguration']['tt:Encoding'];
 					$sources[$inprofile]['width'] = $profiles[$y]['tt:VideoEncoderConfiguration']['tt:Resolution']['tt:Width'];
 					$sources[$inprofile]['height'] = $profiles[$y]['tt:VideoEncoderConfiguration']['tt:Resolution']['tt:Height'];
-					$sources[$inprofile]['fps'] = $profiles[$y]['tt:VideoEncoderConfiguration']['tt:RateControl']['tt:RateControl'];
+					$sources[$inprofile]['fps'] = $profiles[$y]['tt:VideoEncoderConfiguration']['tt:RateControl']['tt:FrameRateLimit'];
 					$sources[$inprofile]['bitrate'] = $profiles[$y]['tt:VideoEncoderConfiguration']['tt:RateControl']['tt:BitrateLimit'];
 				endif;
 
