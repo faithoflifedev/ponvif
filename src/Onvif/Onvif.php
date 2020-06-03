@@ -85,7 +85,7 @@ class Onvif
 				echo( 'Create socket error: [' . socket_last_error() . '] ' . socket_strerror( socket_last_error() ) );
 			endif;
 
-			if ( @socket_bind($sock, Onvif::$discoverybindip, rand( 20000, 40000 ) ) == false ):
+			if ( @socket_bind($sock, Onvif::$discoverybindip, mt_rand( 20000, 40000 ) ) == false ):
 				echo( 'Bind socket error: [' . socket_last_error() . '] ' . socket_strerror( socket_last_error() ) );
 			endif;
 
@@ -103,17 +103,6 @@ class Onvif
 				if ( @socket_recvfrom($sock, $response, 9999, 0, $from, Onvif::$discoverymcastport ) !== false ):
 					if ( $response != NULL && $response != $post_string ):
 						$response = new SoapResponse( $response );
-
-						print_r( $response ); die;
-
-						/* if(!$this->isFault($response)){
-							$response['Envelope']['Body']['ProbeMatches']['ProbeMatch']['IPAddr'] = $from;
-							if($this->discoveryhideduplicates){
-								$result[$from] = $response['Envelope']['Body']['ProbeMatches']['ProbeMatch'];
-							} else {
-								$result[] = $response['Envelope']['Body']['ProbeMatches']['ProbeMatch'];
-							}
-						} */
 					endif;
 				endif;
 			endwhile;
@@ -565,7 +554,7 @@ class Onvif
 
 		$soapRequest->command( SoapRequest::$stop );
 
-		$response = Soap::send( $this->ptzUri, $soapRequest->toString() ); print_r( $response ); die;
+		$response = Soap::send( $this->ptzUri, $soapRequest->toString() );
 
 		$continuousMoveZoom = $response->data;
 
